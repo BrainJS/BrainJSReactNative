@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import classify from './Services/classify-service.js'
 import Header from './Components/header.js'
+import TextResult from './Components/textresult.js'
 
 export default class App extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
 
     this.state = {
       LeeKernaghanResult:"",
@@ -26,15 +27,12 @@ export default class App extends Component {
 
   ClassifyText = () => {
 
-    console.log(this.state.lyrics)
+    let leekernaghanScore = classify.classifyLyrics(this.state.lyrics).LeeKernaghan
+    let acdcScore = classify.classifyLyrics(this.state.lyrics).ACDC
 
-    let leekernaghanScore = classify.classifyLyrics(this.state.lyrics)
-    let acdcScore = classify.classifyLyrics(this.state.lyrics)
+    console.log(typeof(leekernaghanScore))
 
-    console.log(leekernaghanScore)
-    console.log(acdcScore)
-
-    if(leekernaghanScore === NaN || leekernaghanScore === null || acdcScore === NaN || acdcScore === null) {
+    if(isNaN(leekernaghanScore) || isNaN(acdcScore)) {
       this.setState({
         LeeKernaghanResult:"Unable to determine confidence level.",
         ACDCResult:"Unable to determine confidence level.",
@@ -42,16 +40,15 @@ export default class App extends Component {
       })
       return;
     }
-
-    if(leekernaghanScore > acdcScore) {
-      this.setState({
-        LeeKernaghanResultColor:'lightgreen',
-        ACDCResultColor:'red'
-      })
-    } else {
+    if(Number(acdcScore) > Number(leekernaghanScore)) {
       this.setState({
         LeeKernaghanResultColor:'red',
         ACDCResultColor:'lightgreen'
+      })
+    } else {
+      this.setState({
+        LeeKernaghanResultColor:'lightgreen',
+        ACDCResultColor:'red'
       })
     }
 
@@ -79,38 +76,15 @@ export default class App extends Component {
           <Text style={styles.classifyTextStyle}>Classify</Text>
       </TouchableOpacity>
 
-      <Text style={{
-        fontSize:16,
-        fontWeight:"bold",
-        textAlign:"center",
-        marginTop:"10%",
-        marginTop:50,
-        paddingTop:10,
-        paddingBottom:10,
-        backgroundColor:this.state.LeeKernaghanResultColor,
-        opacity:this.state.resultShow
-      }}>
-        Lee Kernaghan {this.state.LeeKernaghanResult}
-      </Text>
-      <Text style={{
-        fontSize:16,
-        fontWeight:"bold",
-        textAlign:"center",
-        paddingTop:10,
-        paddingBottom:10,
-        backgroundColor:this.state.ACDCResultColor,
-        opacity:this.state.resultShow
-      }}>
-        ACDC: {this.state.ACDCResult}
-      </Text>
+      <TextResult resultShow={this.state.resultShow} resultColor={this.state.LeeKernaghanResultColor} resultText={"LeeKernaghan: " + this.state.LeeKernaghanResult} />
+      <TextResult resultShow={this.state.resultShow} resultColor={this.state.ACDCResultColor} resultText={"ACDC: " + this.state.ACDCResult} />
+
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-  },
   inputLyricsTextLable: {
     fontWeight:"bold",
     fontSize:16,
@@ -121,6 +95,7 @@ const styles = StyleSheet.create({
   classifyBtnStyle: {
     marginRight:40,
     marginLeft:40,
+    marginBottom:50,
     marginTop:10,
     paddingTop:10,
     paddingBottom:10,

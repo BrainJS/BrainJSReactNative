@@ -1,6 +1,6 @@
 {
   "name": "brainjsreactnative",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "React Native implentation of Brain.js",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,6 @@
   "author": "Justin Middler - 2018",
   "license": "MIT",
   "dependencies": {
-    "brain.js": "^1.1.2",
-    "sharp": "^0.20.1"
+    "brain.js": "^1.1.2"
   }
 }
